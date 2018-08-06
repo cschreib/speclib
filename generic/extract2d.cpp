@@ -311,6 +311,10 @@ int phypp_main(int argc, char* argv[]) {
         ierr.read(terr);
     }
 
+    double seeing_pix = seeing/(2.335*aspix); // convert seeing from FWHM in arcsec to sigma in pixels
+    default_gauss_pos /= aspix;   // convert arcsec to pixels
+    default_gauss_width /= aspix; // convert arcsec to pixels
+
     if (!full_coverage) {
         double cdelt = lam[1]-lam[0];
 
@@ -638,7 +642,7 @@ int phypp_main(int argc, char* argv[]) {
 
         for (uint_t s : range(nsrc)) {
             f += integrate_gauss(x-0.5, x+0.5,
-                p[1*nsrc+s], sqrt(sqr(p[2*nsrc+s]) + sqr(seeing)), p[s]
+                p[1*nsrc+s], sqrt(sqr(p[2*nsrc+s]) + sqr(seeing_pix)), p[s]
             );
         }
 
@@ -1066,9 +1070,8 @@ void print_help() {
         "reference position, see above). Default is 10 pixels, which means a total of 21 pixels "
         "in the spatial direction.");
     bullet("seeing=...", "Must be a number. The instrument PSF is assumed to be seeing-limited, "
-        "and Gaussian. This number sets the width of the PSF (sigma, not FWHM!) in pixels. "
-        "If you know the actual seeing (FwHM in arcsec), you will have to perform a conversion "
-        "before feeding it to this program. Default is zero, which assumes there is no PSF.");
+        "and Gaussian. This number sets the width of the PSF (FWHM) in arcsec. Default is zero, "
+        "which assumes there is no PSF.");
 
     print("");
     print("Source extraction options:");
@@ -1080,14 +1083,14 @@ void print_help() {
         "the spatial direction, in pixels (total of 2*dpixfit+1 pixels). Default is 6. This can be "
         "used to effectively ignore pixels far away from the source(s).");
     bullet("default_gauss_pos=[...]", "Must be a list of numbers or a single number. This sets the "
-        "starting spatial position (along the slit) of each source, in pixels, and relative to "
+        "starting spatial position (along the slit) of each source, in arcsec, and relative to "
         "the reference spatial position (see 'offset' and 'discard_wcs_pos' above). This list "
         "must contain as many values as the 'sources' list. The value will be used as starting "
         "point for the fitting algorithm, and as fallback value in case the fit failed or when the "
         "S/N is too low.");
     bullet("default_gauss_width=[...]", "Must be a list of numbers or a single number. This sets "
         "the starting spatial width (along the slit) of each source, which is defined as the sigma "
-        "of a Gaussian profile, in pixels. If 'seeing' is set to a non-zero value, the seeing will "
+        "of a Gaussian profile, in arcsec. If 'seeing' is set to a non-zero value, the seeing will "
         "be added in quadrature to this width to model the source profile. This list must contain "
         "as many values as the 'sources' list. The value will be used as starting point for the "
         "fitting algorithm, and as fallback value in case the fit failed or when the S/N is too "
