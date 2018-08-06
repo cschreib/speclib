@@ -160,7 +160,7 @@ for ((a=0; a<${#ARMS[@]}; a++)); do
                     EXTRA_OPTS="${EXTRA_OPTS} flag_end=1.91 flag_begin=1.036"
                 fi
 
-                ophy++ ${SPECLIB_DIR}/extract2d \
+                ophy++ ${SPECLIB_DIR}/generic/extract2d \
                     flux_file=${DATA_DIR}/${OB}/${EPOCH}/SCI_SLIT_FLUX_MERGE2D_${ARM}.fits \
                     flux_hdu=0 error_hdu=1 name=${TARGET} out_dir=${OUT_DIR}/${OB} suffix=_${EPOCH} \
                     dpix=37 dpixfit=12 oh_line_width=60 verbose auto_mask auto_mask_dl=30 \
@@ -194,7 +194,7 @@ for ((a=0; a<${#ARMS[@]}; a++)); do
 
                 echo "note: found ${#FILES[@]} exposures"
 
-                ophy++ ${SPECLIB_DIR}/get_fluxes files=[`join , ${FILES[@]}`] \
+                ophy++ ${SPECLIB_DIR}/generic/get_fluxes files=[`join , ${FILES[@]}`] \
                     catalog=${RESCALING_CATALOG} catalog_id=${CATID} \
                     verbose filters=${RESCALING_FILTERS}
             done
@@ -213,7 +213,7 @@ for ((a=0; a<${#ARMS[@]}; a++)); do
                         FILES=("${FILES[@]}" ${OUT_DIR}/${OB}/stacked_${TARGET}_${EPOCH}_${SOURCE}.fits)
                     done
 
-                    ophy++ ${SPECLIB_DIR}/flux_rescale files=[`join , ${FILES[@]}`] verbose
+                    ophy++ ${SPECLIB_DIR}/generic/flux_rescale files=[`join , ${FILES[@]}`] verbose
                 done
             done
         fi
@@ -247,20 +247,20 @@ for ((a=0; a<${#ARMS[@]}; a++)); do
 
             echo "note: found ${#FILES[@]} exposures"
 
-            ophy++ ${SPECLIB_DIR}/stack1d files=[`join , ${FILES[@]}`] \
+            ophy++ ${SPECLIB_DIR}/generic/stack1d files=[`join , ${FILES[@]}`] \
                 out=${OUT_DIR}/${SOURCE}/stacked_${ARM}.fits rebin=${REBIN_STACKS} \
                 verbose filters=${STACK_FILTERS}
 
             if [ ${DO_RESCALE} -eq 1 ]; then
-                ophy++ ${SPECLIB_DIR}/stack1d files=[`join , ${FILESR[@]}`] \
+                ophy++ ${SPECLIB_DIR}/generic/stack1d files=[`join , ${FILESR[@]}`] \
                     out=${OUT_DIR}/${SOURCE}/stacked_${ARM}_rescaled.fits rebin=${REBIN_STACKS} \
                     verbose filters=${STACK_FILTERS}
             fi
 
-            ophy++ ${SPECLIB_DIR}/stack2d files=[`join , ${FILES2DR[@]}`] specs=[`join , ${FILESR[@]}`] \
+            ophy++ ${SPECLIB_DIR}/generic/stack2d files=[`join , ${FILES2DR[@]}`] specs=[`join , ${FILESR[@]}`] \
                 out=${OUT_DIR}/${SOURCE}/stacked_${ARM}_spec2d_sub.fits rebin=${REBIN_STACKS2D}
 
-            ophy++ ${SPECLIB_DIR}/stack2d files=[`join , ${FILES2D[@]}`] specs=[`join , ${FILESR[@]}`] \
+            ophy++ ${SPECLIB_DIR}/generic/stack2d files=[`join , ${FILES2D[@]}`] specs=[`join , ${FILESR[@]}`] \
                 out=${OUT_DIR}/${SOURCE}/stacked_${ARM}_spec2d.fits rebin=${REBIN_STACKS2D}
         done
     fi
