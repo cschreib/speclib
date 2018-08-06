@@ -779,8 +779,6 @@ int phypp_main(int argc, char* argv[]) {
         models(s,_) = model_func(sx, fitres.params);
     }
 
-    fits::write(out_dir+"models.fits", models);
-
     vec2d flx1d = replicate(dnan, nsrc, tflxfit.dims[1]);
     vec2d err1d = replicate(dnan, nsrc, tflxfit.dims[1]);
     vec1d bg1d, bg1dx;
