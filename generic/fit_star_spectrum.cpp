@@ -93,8 +93,9 @@ int phypp_main(int argc, char* argv[]) {
     vec1d flx = res.amp[res.bfit]*tlib.sed(res.bfit,_);
     flx = uJy2cgs(lam, flx);
 
-    vec1s hdr = {"lambda[um]", "flambda[cgs]"};
-    ascii::write_table_hdr("best_fit_slit_star.dat", 22, hdr, lam, flx);
+    ascii::output_format opts;
+    opts.header = {"lambda[um]", "flambda[cgs]"};
+    ascii::write_table("best_fit_slit_star.dat", opts, lam, flx);
 
     return 0;
 }
