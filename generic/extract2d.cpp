@@ -1035,7 +1035,7 @@ void print_help() {
         "telescope response variations between the source and sky positions). Set this to zero "
         "to disable OH line flagging.");
     bullet("oh_line_width=...", "This sets the expected width of OH lines on the spectral axis, "
-        "in km/s (c*Delta_lambda/lambda). Default is 100 km/s, which is adequate for R=3000 ",
+        "in km/s (c*Delta_lambda/lambda). Default is 100 km/s, which is adequate for R=3000 "
         "spectra (e.g., MOSFIRE), while 60 km/s is a better value for high resolution spectra "
         "(e.g., X-SHOOTER).");
     bullet("no_gapflag", "Set this flag to disable flagging transmission gaps in between "
