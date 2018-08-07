@@ -25,11 +25,11 @@ These instructions will tell you how to reduce X-SHOOTER data using the ESO esor
 
 # Preparing your computer
 
-To start with, you must install the esorex/reflex pipeline. Go to the following webpage and follow the installation instructions:
+To start with, you must install the EsoReflex tool and the X-SHOOTER pipeline. Go to the following webpage and follow the installation instructions:
 
-https://www.eso.org/sci/software/pipelines/xshooter/
+https://www.eso.org/sci/software/esoreflex/
 
-There is no need to install ```gasgano```, so you can skip this step. But ```EsoReflex``` is mandatory.
+I can recommend the "Automatic Installation with installation script" method for installing the software. Just run the script and answer the questions. In particular, when asked pay attention to only install the X-SHOOTER pipeline and not all the instrument pipelines, as this would take ages.
 
 You must then compile the tools in this repository. To do so, first use a terminal to go to a directory somewhere in your home folder where you want to store the programs (in the following I will assume ```/home/<user>/code/```), and clone the github repository:
 
@@ -83,9 +83,9 @@ There could be a number of files starting with ```M.XSHOOTER...``` remaining in 
 
 # Produce 2D spectra
 
-Follow the ESO instructions to start EsoReflex, and open the X-SHOOTER pipeline (Xshooter.xml file). This will seem atrociously complicated, and it is. Fortunately the default behavior of the pipeline is very decent in most cases, so we won't adjust any detail here and simply let it run unsupervised, which is fairly easy. If you ever feel lost, take a look at the [official tutorial](ftp://ftp.eso.org/pub/dfs/pipelines/xshooter/xshoo-reflex-tutorial-2.17.pdf).
+Follow the ESO instructions to start EsoReflex, and open the X-SHOOTER pipeline (```xshooter.xml file```). This will seem atrociously complicated, and it is. Fortunately the default behavior of the pipeline is very decent in most cases, so we won't adjust any detail here and simply let it run unsupervised, which is fairly easy. If you ever feel lost, take a look at the [official tutorial](ftp://ftp.eso.org/pub/dfs/pipelines/xshooter/xshoo-reflex-tutorial-2.17.pdf).
 
-Set the ```ROOT_DATA_DIR``` variable to point to the directory where you want to store the 2D spectra produced by the pipeline. To do so, double click on the variable and use the dialog to navigate to the directory. Once you found it, press OK and make sure the variable has been correctly updated (I have seen cases where it did not, and I had to repeat the procedure once again...). Do the same with ```RAW_DATA_DIR```, and make it point to the directory in which you  stored the X-SHOOTER raw data for the first OB, in the previous step. Finally, make sure the ```CALIB_DATA_DIR``` is correct and points to the X-SHOOTER calibration data directory (for example, for me it was ```/home/cschreib/programming/xshooter/calib/xshoo-2.9.3```).
+Set the ```ROOT_DATA_DIR``` variable to point to the directory where you want to store the output of the pipeline. To do so, double click on the variable and click "Browse", then use the dialog to navigate to the directory. Once you found it, press "OK" and make sure the variable has been correctly updated (I have seen cases where it did not, and I had to repeat the procedure once again...). Do the same with ```RAW_DATA_DIR```, and make it point to the directory in which you  stored the X-SHOOTER raw data for the first OB, in the previous step. Finally, make sure the ```CALIB_DATA_DIR``` is correct and points to the X-SHOOTER calibration data directory (for example, for me it was ```/home/cschreib/programming/xshooter/calib/xshoo-2.9.3```).
 
 Once you're done, click the "Run" button (green "play" button at the top). The pipeline will analyze the directories you setup, and look for data to reduce. If all goes well, it will identify your OB and list a couple different data sets, typically one per arm, and separating science observations from telluric standards (if you have any). Look for the column ```SEQ.ARM``` to know the arm corresponding to a data set (UVB, VIS, or NIR). The ```OBJECT``` column should tell you the observed target (```STD,TELLURIC``` for telluric standard, and whatever target name you set for your program for science observations).
 
@@ -97,26 +97,23 @@ After a while, the pipeline will be finished and will display the list of reduce
 
 The pipeline will store its products in the ```reflex_end_products/<date>/<dataset>``` directory. The ```<date>``` corresponds to the precise date (down to milliseconds...) at which the reduction of the OB was finished. This is pretty obscure and starts becoming a mess when you have many OBs to reduce, or when you try and fail many times (indeed, it will create a directory for each attempt).
 
-For this reason, as soon as the products are reduced, I copy the files into another directory where I know how to locate things easily. Here is the organization I follow. I have a root directory for each target observed with X-SHOOTER, which contains two main directories: ```raw``` (contains the pipeline reduced 2D spectra), and ```reduced``` (contains the final 1D spectra, individual and stacked). Inside the ```raw``` directory, I create a different sub-directory for each separate OB. I typically call them ```A```, ```B```, ```C```, etc, in the order in which they were observed. Inside each of these directories, I copy the directories produced by the pipeline in ```reflex_end_products/...```. These are called, e.g., ```XSHOO.2018-02-19T00:33:32.911-sci_tpl```. I rename them to remove the ```-sci_tpl``` suffix and replace it by the name of the arm, so this example becomes ```XSHOO.2018-02-19T00:33:32.911-UVB```. In the end I end up with something like:
+For this reason, as soon as the products are reduced for one OB, I copy the files into another directory where I know how to locate things easily. Here is the organization I follow. I have a root directory for each target observed with X-SHOOTER, which contains two main directories: ```raw``` (contains the pipeline reduced 2D spectra), and ```reduced``` (contains the final 1D spectra, individual and stacked). Inside the ```raw``` directory, I create a different sub-directory for each separate OB. I typically call them ```A```, ```B```, ```C```, etc, in the order in which they were observed. Inside each of these directories, I copy the directories produced by the pipeline in ```reflex_end_products/...```. These are called, e.g., ```XSHOO.2018-02-19T00:33:32.911-sci-uvb_tpl```. I rename them to remove the ```-sci-uvb_tpl``` suffix and replace it by the name of the arm, so this example becomes ```XSHOO.2018-02-19T00:33:32.911-UVB```. In the end I end up with something like:
 
 ```bash
 my_source/
  - raw/
     - A/
        - XSHOO.2018-02-19T00:33:32.911-UVB/
-           SCI_SLIT_FLUX_MERGE1D_UVB.fits
-           SCI_SLIT_FLUX_MERGE2D_UVB.fits
-           ...
+           7329-A_SCI_SLIT_FLUX_MERGE2D_UVB.fits
        - XSHOO.2018-02-19T00:33:38.091-VIS/
-           SCI_SLIT_FLUX_MERGE1D_VIS.fits
-           SCI_SLIT_FLUX_MERGE2D_VIS.fits
-           ...
-       - ...
+           7329-A_SCI_SLIT_FLUX_MERGE2D_VIS.fits
+       - XSHOO.2018-02-19T00:33:41.063-NIR/
+           7329-A_SCI_SLIT_FLUX_MERGE2D_NIR.fits
     - B/
        - ...
 ```
 
-This is a bit tedious to do manually every time, and I have not gotten around to script this part. But it only needs doing once, then you can work on the 2D spectra much more conveniently. The scripts I discuss below assume the above directory structure and filenames, so I recommend you adopt the same (or be willing to adjust the scripts yourself).
+Note that only the ```...SCI_SLIT_FLUX_MERGE2D_<arm>.fits``` files are needed for the rest of the reduction. This is a bit tedious to do manually every time, and I have not gotten around to script this part. But it only needs doing once, then you can work on the 2D spectra much more conveniently. The scripts I discuss below assume the above directory structure and filenames, so I recommend you adopt the same (or be willing to adjust the scripts yourself).
 
 
 # Produce 1D spectra, a first reduction
@@ -138,7 +135,7 @@ The latter are the most important variables, as they define the models that will
 
 Once you're satisfied with the options listed above, execute the script (there are a number of other options to investigate, but we'll cover them later). The script will print a number of things in the terminal to inform you of the progress, and eventually complete execution.
 
-If all goes well, you'll have a new directory called ```reduced```. This directory will contain a sub-directory for each OB you reduced, containing the individual 1D spectra for each OB. This is useful for inspection of the data, to see if one OB in particular is particularly bad and should be excluded (or cured in some way). At this stage, look in particular at the ```..._spec2d.fits``` and ```..._spec2d_residual.fits```. These are, respectively, the 2D spectra before and after subtracting the source models. Look for horrible residuals, which could indicate incorect values in the ```SOURCES_xxx``` lists introduced above (we'll discuss below how to improve that).
+If all goes well, you'll have a new directory called ```reduced```. This directory will contain a sub-directory for each OB you reduced, containing the individual 1D spectra for each OB. This is useful for inspection of the data, to see if one OB in particular is particularly bad and should be excluded (or cured in some way). At this stage, look in particular at the ```..._spec2d.fits``` and ```..._spec2d_residual.fits```. These are, respectively, the 2D spectra before and after subtracting the source models. Look for horrible residuals, which could indicate incorrect values in the ```SOURCES_xxx``` lists introduced above (we'll discuss below how to improve that).
 
 You can then inspect the stacked spectra. These are saved in one sub-directory per source (as listed in ```SOURCES```, e.g., ```blobA``` and ```blobB```). Look inside one of them, and start by inspecting the stacked and binned 2D spectrum (```..._spec2d_b30.fits```) and its residual (```..._spec2d_sub_b30.fits```). The latter is the residual after subtracting this source only (not the other sources). Looking at the binned spectrum is a good way to identify if there is signal (or issues) in the data, because X-SHOOTER has a pretty high spectral resolution and it's less likely you will detect something at the native spectral scale. If the 2D spectrum look OK, you can look at the 1D spectrum (```stacked_<arm>.fits```) or a binned version (```stacked_<arm>_b30.fits```).
 
