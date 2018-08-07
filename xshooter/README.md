@@ -10,9 +10,9 @@
 - [Produce 2D spectra](#produce-2d-spectra)
 - [Produce 1D spectra, a first reduction](#produce-1d-spectra-a-first-reduction)
 - [Better darks](#better-darks)
+- [Adjusting the models to extract 1D spectra](#adjusting-the-models-to-extract-1d-spectra)
 - [Telluric correction](#telluric-correction)
 - [Rescaling to photometry](#rescaling-to-photometry)
-- [Adjusting the models to extract 1D spectra](#adjusting-the-models-to-extract-1d-spectra)
 - [Other tweaks](#other-tweaks)
 
 <!-- /MarkdownTOC -->
@@ -169,6 +169,15 @@ Once this is done, repeat this operation for all the OBs. Then re-run the EsoRef
 ![Better dark subtraction](dark_2dspec.png)
 
 
+# Adjusting the models to extract 1D spectra
+
+In the instructions above, you were asked to provide a guess for the shape of each of your sources on the slit. If your sources are bright enough, this will be sufficient for the code to find the best models in all cases, and give an optimal extraction. If not (or if your sources have only emission lines and are not detected in the continuum), then the code will probably just use this guess as a best available solution, and go ahead with the extraction. This may be good enough for a first reduction, but you'll eventually need to optimize this if you care about getting the best out of your spectra.
+
+There are a few easy adjustments that one can make to improve on this first guess. The first is to look for systematic shifts along the slit. This can happen if the acquisition was imperfect, or if the telescope drifted for some reason. You can spot these cases visually, either if your sources have marginal S/N in the stacked slit profile (see instructions above on how to visualize this), or if you can see clear emission lines. If you do find significant offsets, you can correct for them manually by tweaking the ```OFFSET``` variable in the ```reduce.sh``` script. It is located somewhat in the middle of the script, away from the other variables (look for ```# MODIFY.``` in the file). This variable is reset to zero for each OB and arm combination, by default, but you can modify it at your own will (there is an example in the script). Positive offsets will "move the pixels up" (or move the reference pixel down; the reference pixel is the pixel which is attributed a position offset of zero arcsec). In a similar fashion, you can adjust the seeing in the ```SEEING``` variable.
+
+Another thing you can do is to look at the stacked 2D spectrum produced in the first reduction, and compute its wavelength-averaged profile. This stacked profile may provide a more significant detections of the source profiles, which you can use to refine your best guesses.
+
+
 # Telluric correction
 
 The pipeline has reduced telluric standard stars (if you had some in your data), but has not applied any correction. We will see here how to perform this correction, which is very easy. It should only be necessary/useful if you're a) looking for continuum features (absorption lines, etc.), or b) interested in having precise line fluxes. If all you care about is determining a redshift, you can probably skip this.
@@ -227,15 +236,6 @@ mwrfits, /create, {id:id, flux:flux, flux_err:flux_err, bands:bands}, 'catalog.f
 Once you have the catalog ready, write down its path in the ```RESCALING_CATALOG``` variable in ```reduce.sh```. Make sure each of your sources have the right ID specified in ```SOURCES_ID``` (must match a value in the ```id``` column of the catalog). Make sure you have downloaded the filter data base (see instructions above). Then pick a photometric band (or several photometric bands) that are a) fully covered by your spectrum, and b) with available photometry in the flux catalog. List these bands in the ```RESCALING_FILTERS``` variable in ```reduce.sh```. Finally, set the ```DO_RESCALE``` variable to ```1```, and re-run the script.
 
 You should notice that a few more things will get printed in the terminal. In particular the code will tell you what rescaling factor it applied, and if it was able to determine this factor with sufficient accuracy to be of any use (if not, the code simply does not rescale the spectra).
-
-
-# Adjusting the models to extract 1D spectra
-
-In the instructions above, you were asked to provide a guess for the shape of each of your sources on the slit. If your sources are bright enough, this will be sufficient for the code to find the best models in all cases, and give an optimal extraction. If not (or if your sources have only emission lines and are not detected in the continuum), then the code will probably just use this guess as a best available solution, and go ahead with the extraction. This may be good enough for a first reduction, but you'll eventually need to optimize this if you care about getting the best out of your spectra.
-
-There are a few easy adjustments that one can make to improve on this first guess. The first is to look for systematic shifts along the slit. This can happen if the acquisition was imperfect, or if the telescope drifted for some reason. You can spot these cases visually, either if your sources have marginal S/N in the stacked slit profile (see instructions above on how to visualize this), or if you can see clear emission lines. If you do find significant offsets, you can correct for them manually by tweaking the ```OFFSET``` variable in the ```reduce.sh``` script. It is located somewhat in the middle of the script, away from the other variables (look for ```# MODIFY.``` in the file). This variable is reset to zero for each OB and arm combination, by default, but you can modify it at your own will (there is an example in the script). Positive offsets will "move the pixels up" (or move the reference pixel down; the reference pixel is the pixel which is attributed a position offset of zero arcsec). In a similar fashion, you can adjust the seeing in the ```SEEING``` variable.
-
-Another thing you can do is to look at the stacked 2D spectrum produced in the first reduction, and compute its wavelength-averaged profile. This stacked profile may provide a more significant detections of the source profiles, which you can use to refine your best guesses.
 
 
 # Other tweaks
