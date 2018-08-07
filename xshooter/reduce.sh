@@ -53,7 +53,7 @@ SOURCES_POS=(-1.16 1.16)
 SOURCES_WIDTH=(0.133 0.133)
 
 # MODIFY here the options passed to 'extract2d' (see 'extract2d help')
-EXTRACT_OPTIONS="gauss_nofit"
+EXTRACT_OPTIONS="gauss_nofit dpix=37 dpixfit=12 oh_line_width=60 verbose auto_mask auto_mask_dl=30"
 
 # MODIFY the rebinning to use to produce stacked spectra.
 # (you can list as many as you like, but be sure to include "1" to produce an unbinned spectrum)
@@ -68,7 +68,7 @@ FILTER_DB=${SPECLIB_DIR}/filter-db/db.dat
 
 # MODIFY the list of broadband filters to use for rescaling to photometry
 # Must be listed in the FILTER_DB.
-RESCALING_FILTERS=[ukidss_H]
+RESCALING_FILTERS=[vista_H,vista_K]
 
 # MODIFY the path to the photometric catalog containing the fluxes
 RESCALING_CATALOG=/home/cschreib/data/fits/uds/uds_zfourge_dr1.fits
@@ -111,37 +111,21 @@ for ((a=0; a<${#ARMS[@]}; a++)); do
             EPOCHS=(`ls ${DATA_DIR}/${OB}/ | grep -E "${ARM}$"`)
             echo "note: found ${#EPOCHS[@]} epochs for OB ${OB}"
 
-            OFFSETS=()
-            SEEINGS=()
-
-            # MODIFY. Here you can specify the offsets and seeing for each OB & ARM (separately).
-            # This is optional. If you don't do anything, no offset will be used, and the seeing
-            # will be set to the value of DEFAULT_SEEING.
-            # For example:
-            if [ ${OB} == "A" ] && [ ${ARM} == "NIR" ]; then
-                # Set seeing in OB A and NIR arm to 0.7 arcsec, and an offset of -1.2 pixels
-                SEEINGS=(0.7)
-                OFFSETS=(-1.2)
-            fi
-
             for ((e=0; e<${#EPOCHS[@]}; e++)); do
                 EPOCH=${EPOCHS[$e]}
 
-                if [ ${#OFFSETS[@]} -eq 0 ]; then
-                    OFFSET=0
-                elif [ ${#OFFSETS[@]} -eq 1 ]; then
-                    OFFSET=${OFFSETS[0]}
-                else
-                    OFFSET=${OFFSETS[$e]}
-                fi
+                OFFSET=0
+                SEEING=${DEFAULT_SEEING[$a]}
 
-                if [ ${#SEEINGS[@]} -eq 0 ]; then
-                    SEEING=${DEFAULT_SEEING[$a]}
-                elif [ ${#SEEINGS[@]} -eq 1 ]; then
-                    SEEING=${SEEINGS[0]}
-                else
-                    SEEING=${SEEINGS[$e]}
-                fi
+                # MODIFY. Here you can specify the offsets and seeing for each OB & ARM & epoch
+                # (separately). This is optional. If you don't do anything, no offset will be used,
+                # and the seeing will be set to the value of DEFAULT_SEEING.
+                # For example:
+                # if [ ${OB} == "A" ] && [ ${ARM} == "NIR" ]; then
+                #     # Set seeing in OB A and NIR arm to 0.7 arcsec, and an offset of -1.2 pixels
+                #     SEEING=0.7
+                #     OFFSET=-1.2
+                # fi
 
                 echo "note: analyzing epoch ${EPOCH}"
 
@@ -163,9 +147,8 @@ for ((a=0; a<${#ARMS[@]}; a++)); do
                 ophy++ ${SPECLIB_DIR}/generic/extract2d \
                     flux_file=${DATA_DIR}/${OB}/${EPOCH}/SCI_SLIT_FLUX_MERGE2D_${ARM}.fits \
                     flux_hdu=0 error_hdu=1 name=${TARGET} out_dir=${OUT_DIR}/${OB} suffix=_${EPOCH} \
-                    dpix=37 dpixfit=12 oh_line_width=60 verbose auto_mask auto_mask_dl=30 \
                     offset=${OFFSET} default_gauss_width=[`join , ${SOURCES_WIDTH[@]}`] \
-                    default_gauss_pos=[`join , ${SOURCES_POS[@]}`] \
+                    default_gauss_pos=[`join , ${SOURCES_POS[@]}`] seeing=${SEEING} \
                     sources=[`join , ${SOURCES[@]}`] instrument="X-SHOOTER" \
                     ${EXTRA_OPTS} discard_wcs_pos ${EXTRACT_OPTIONS}
             done
