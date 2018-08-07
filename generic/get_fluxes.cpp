@@ -191,7 +191,7 @@ int phypp_main(int argc, char* argv[]) {
     // Read catalog fluxes
     vec2f cflux, cflux_err;
     vec1s csid, cbands;
-    uint_t cid;
+    uint_t cid = npos;
 
     if (!catalog_file.empty()) {
         fits::input_table itbl(catalog_file);
