@@ -99,12 +99,14 @@ void print_help() {
     print("");
     print("Main parameters:");
     paragraph("The files listed in 'files=[...]' must be valid 1D spectra FITS files, for example "
-        "created by 'extract2d'. It is expected that the fluxes are located in the first HDU, and "
-        "uncertainties in the second HDU. For each file in this list, there must be a corresponding "
-        "<file>_broadband.fits file in the same directory, which contains the measured synthetic "
-        "fluxes (e.g., obtained with 'getfluxes'). The program will then rescale all the data in "
-        "the file so that the synthetic broadband fluxes agree as best as possible with their "
-        "measured fluxes in the catalog.");
+        "created by 'extract2d', and one for each source in a given slit. It is expected that the "
+        "fluxes are located in the first HDU, and uncertainties in the second HDU. For each file in "
+        "this list, there must be a corresponding <file>_broadband.fits file in the same directory, "
+        "which contains the measured synthetic fluxes (e.g., obtained with 'get_fluxes'). The "
+        "program will then rescale all the data in the file so that the synthetic broadband fluxes "
+        "agree as best as possible with their measured fluxes in the catalog. The rescaling factor "
+        "is determined as an average value, and is assumed to be the same for all the sources whose "
+        "spectra re listed in 'files=[...]'.");
 
     print("");
     print("Output format:");
@@ -115,7 +117,8 @@ void print_help() {
     print("");
     print("Options:");
     bullet("files=[...]", "Must be a list of files. This is the list of 1D spectra that will be "
-        "rescaled.");
+        "rescaled, one spectrum per source. The way this tool is meant to be used, this list should "
+        "correspond to all the sources detected in a given slit for one OB (or one exposure).");
     bullet("min_snr=...", "Must be a number. This defines the minimum allowed S/N on the rescaling "
         "factor. If the S/N falls below this threshold, no rescaling is attempted. Default is 3.");
     bullet("exclude_hdu=[...]", "Must be a list of integers. The HDUs listed here will not be "
