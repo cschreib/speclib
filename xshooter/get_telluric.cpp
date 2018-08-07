@@ -1,5 +1,4 @@
 #include <phypp.hpp>
-#include <phypp/astro/template_fit.hpp>
 
 void print_help();
 
