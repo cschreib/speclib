@@ -1,4 +1,4 @@
-# Instructions X-SHOOTER reduction
+# Instructions for X-SHOOTER reduction
 
 # Table of content
 
@@ -41,22 +41,14 @@ This will create directory called ```speclib```. Now execute the following comma
 
 ```bash
 cd speclib
-
-cd xshooter
 mkdir build
 cd build
 cmake ../
-make install
-cd ..
-
-cd generic
-mkdir build
-cd build
-cmake ../
-make install
+make generic
+make xshooter
 ```
 
-For this to work, you must have ```git``` and ```cmake``` installed on your computer. They are most likely already installed; if not, you can use your distribution's package managed (or MacPorts in OSX) to install then (e.g., ```sudo apt-get install git cmake```).
+For this to work, you must have ```git``` and ```cmake``` installed on your computer. They are most likely already installed; if not, you can use your distribution's package manager (or MacPorts in OSX) to install then (e.g., ```sudo apt-get install git cmake```).
 
 If you care about rescaling spectra to photometry, you will also need a filter response curve database. To download one, simply execute the command below inside the ```speclib``` directory:
 
@@ -233,7 +225,7 @@ flux_err[1,*] = ...  ; uncertainties of all galaxies in H band
 mwrfits, /create, {id:id, flux:flux, flux_err:flux_err, bands:bands}, 'catalog.fits'
 ```
 
-Once you have the catalog ready, write down its path in the ```RESCALING_CATALOG``` variable in ```reduce.sh```. Make sure each of your sources have the right ID specified in ```SOURCES_ID``` (must match a value in the ```id``` column of the catalog). Make sure you have downloaded the filter data base (see instructions above). Then pick a photometric band (or several photometric bands) that are a) fully covered by your spectrum, and b) with available photometry in the flux catalog. List these bands in the ```RESCALING_FILTERS``` variable in ```reduce.sh```. Finally, set the ```DO_RESCALE``` variable to ```1```, and re-run the script.
+Once you have the catalog ready, write down its path in the ```RESCALING_CATALOG``` variable in ```reduce.sh```. Make sure each of your sources have the right ID specified in ```SOURCES_ID``` (must match a value in the ```id``` column of the catalog). Make sure you have downloaded the filter data base (see instructions above). Then pick a photometric band (or several photometric bands) that are: a) well covered by your spectrum, and b) with available photometry in the flux catalog. List these bands in the ```RESCALING_FILTERS``` variable in ```reduce.sh```. Finally, set the ```DO_RESCALE``` variable to ```1```, and re-run the script.
 
 You should notice that a few more things will get printed in the terminal. In particular the code will tell you what rescaling factor it applied, and if it was able to determine this factor with sufficient accuracy to be of any use (if not, the code simply does not rescale the spectra).
 
