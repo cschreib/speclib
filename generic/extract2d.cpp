@@ -511,8 +511,8 @@ int phypp_main(int argc, char* argv[]) {
         tflx = replicate(dnan, 2*dpix+1, oflx.dims[1]);
         terr = replicate(dnan, 2*dpix+1, oflx.dims[1]);
 
-        uint_t i0 = max(ips0-dpix, 0);
-        uint_t i1 = min(ips0+dpix, oflx.dims[0]-1);
+        uint_t i0 = max(ips0-int_t(dpix), 0);
+        uint_t i1 = min(ips0+int_t(dpix), int_t(oflx.dims[0])-1);
         uint_t o0 = dpix + (int_t(i0) - ips0);
         uint_t o1 = dpix + (int_t(i1) - ips0);
 
