@@ -169,7 +169,7 @@ Once this is done, repeat this operation for all the OBs. Then re-run the EsoRef
 
 # Telluric correction
 
-The pipeline has reduced telluric standard stars (if you had some in your data), but has not applied any correction. We will see here how to perform this correction, which is very easy.
+The pipeline has reduced telluric standard stars (if you had some in your data), but has not applied any correction. We will see here how to perform this correction, which is very easy. It should only be necessary/useful if you're a) looking for continuum features (absorption lines, etc.), or b) interested in having precise line fluxes. If all you care about is determining a redshift, you can probably skip this.
 
 First we'll have to copy the reduced telluric spectra in the ```raw``` folder for the ```reduce.sh``` script to find them. For each OB, go in the ```reflex_end_products/.../``` directory of the OB and identify the files ending with ```...-std-telluric_tpl```. There are typically a few telluric stars, taken at different elevation. You should try to pick the one that has the closest elevation to your data. To determine this, open the ```..._MERGE2D_<arm>.fits``` file (does not matter which arm) and look inside the header for the keyword named ```HIERARCH ESO TPL AIRM START```, and do the same for the first frame of your OB. Also inspect the 2D spectrum of the telluric standard to make sure it looks clean. When you have found the best star, copy all the files inside the ```raw/<OB>/telluric``` directory (changing ```<OB>``` to the name of the OB).
 
@@ -180,4 +180,44 @@ You can check the quality of the telluric correction using the ```plot_telluric.
 
 # Rescaling to photometry
 
-WIP
+Another way to improve the reduction is to flux-calibrate the OBs before they are stacked, to remove variations of the effective transmission (telescope + atmosphere). This has several advantages. First, since the final error bars are determined from the variance between exposures, these error bars will be over-estimated if the transmission varies significantly. Second, since the stack is performed using inverse variance weighting, this will naturally weight down the exposures with poor transmission. So this is generally a good thing to do.
+
+However, for this to work at all, you need to have at least one of your sources with some detectable continuum emission (possibly after aggressive binning). If you know your sources are effectively pure emission line sources with very faint continuum, you will not be able to use this method. You also need to have a photometric catalog ready. This photometric catalog must be a FITS table with a particular format. It can be created in IDL with the following code:
+
+```IDL
+; First, read your catalog.
+; Second, arrange the data in the following variables:
+;  * id : an array of integers, the IDs of each galaxy in the catalog.
+;  * flux : a 2D array of float/double, containing the fluxes in uJy.
+;           The first dimension is for each band, the second dimension is for each galaxy.
+;           So if I want the flux in the band 'b' for the galaxy 'i', I write: 'flux[b,i]'.
+;           Non-detections or invalid fluxes must be set to '!values.f_nan'.
+;  * flux_err : same as 'flux', but for flux uncertainties.
+;  * bands : an array of strings (code names) that identifies each photometric band.
+;            For example, the band 'b' has for code name 'bands[b]'.
+;            These names must match with names of response filters in the 'filter-db/db.dat'
+;            file that you should have downloaded earlier.
+
+; Example
+ngal = 1000 ; we have 1000 galaxies in the catalog
+nband = 3   ; we have 3 photometric bands
+
+; Create the arrays
+id       = indgen(ngal)+1 ; [1, 2, 3, etc.]
+flux     = fltarr(nband, ngal)
+flux_err = fltarr(nband, ngal)
+bands    = strarr(nband)
+
+; Fill them up with data
+bands[0] = 'vista_J' ; UltraVISTA J band
+flux[0,*] = ...      ; flux of all galaxies in J band
+flux_err[0,*] = ...  ; uncertainties of all galaxies in J band
+
+bands[1] = 'vista_H' ; UltraVISTA H band
+flux[1,*] = ...      ; flux of all galaxies in H band
+flux_err[1,*] = ...  ; uncertainties of all galaxies in H band
+; etc...
+
+; Now write this into a FITS table
+mwrfits, /create, {id:id, flux:flux, flux_err:flux_err, bands:bands}, 'catalog.fits'
+```
