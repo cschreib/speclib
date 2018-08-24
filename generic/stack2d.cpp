@@ -192,7 +192,6 @@ int phypp_main(int argc, char* argv[]) {
         fits::setkey(hdr, "CTYPE1", "WAVE");
         fits::setkey(hdr, "CUNIT1", "um");
         fits::setkey(hdr, "CRPIX1", 1.0);
-        // fits::setkey(hdr, "CRVAL1", lam[0]+0.5*(dl2 - dl1));
         fits::setkey(hdr, "CRVAL1", lam[(rebin-1)/2]);
         fits::setkey(hdr, "CDELT1", dl2);
 
