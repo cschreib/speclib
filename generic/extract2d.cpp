@@ -831,8 +831,8 @@ int phypp_main(int argc, char* argv[]) {
             oimg.write_keyword("CRVAL1", lam[0]);
             oimg.write_keyword("CDELT1", lam[1]-lam[0]);
 
-            oimg.write_keyword("GWIDTH", fitres.params[2*nsrc+s]);
-            oimg.write_keyword("GPOS",   fitres.params[1*nsrc+s]);
+            oimg.write_keyword("GWIDTH", fitres.params[2*nsrc+s]*aspix);
+            oimg.write_keyword("GPOS",   fitres.params[1*nsrc+s]*aspix);
             oimg.write_keyword("EXPTIME", exptime);
             oimg.write_keyword("SEEING", seeing);
 
