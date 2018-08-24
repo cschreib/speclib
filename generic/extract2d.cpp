@@ -622,8 +622,10 @@ int phypp_main(int argc, char* argv[]) {
     }
 
     vec1d sx = findgen(np) - np/2;
-    serror /= max(sprof);
-    sprof /= max(sprof);
+    double norm = max(sprof - median(sprof));
+    if (norm <= 0.0) norm = 1.0;
+    serror /= norm;
+    sprof /= norm;
 
     vec1u idbp = where(!is_finite(sprof) || serror <= 0.0);
     serror[idbp] = 1e9;
