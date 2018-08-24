@@ -99,7 +99,7 @@ for ((a=0; a<${#ARMS[@]}; a++)); do
         if [ ${DO_TELLURIC} -eq 1 ]; then
             if [ ${ARM} != "UVB" ] || [ ${NO_TELLURIC_UVB} -eq 0 ]; then
                 echo "note: processing telluric star for OB ${OB} and arm ${ARM}"
-                ophy++ ${SPECLIB_DIR}/xshooter/get_telluric \
+                ${SPECLIB_DIR}/xshooter/get_telluric \
                     flux_file=${DATA_DIR}/${OB}/telluric/TELL_SLIT_FLUX_MERGE1D_${ARM}.fits \
                     flux_hdu=0 error_hdu=1 out=${OUT_DIR}/${OB}/telluric_${ARM}.fits \
                     telluric_gaps=${SPECLIB_DIR}/xshooter/telluric_regions.dat
@@ -144,7 +144,7 @@ for ((a=0; a<${#ARMS[@]}; a++)); do
                     EXTRA_OPTS="${EXTRA_OPTS} flag_end=1.91 flag_begin=1.036"
                 fi
 
-                ophy++ ${SPECLIB_DIR}/generic/extract2d \
+                ${SPECLIB_DIR}/generic/extract2d \
                     flux_file=${DATA_DIR}/${OB}/${EPOCH}/SCI_SLIT_FLUX_MERGE2D_${ARM}.fits \
                     flux_hdu=0 error_hdu=1 name=${TARGET} out_dir=${OUT_DIR}/${OB} suffix=_${EPOCH} \
                     offset=${OFFSET} default_gauss_width=[`join , ${SOURCES_WIDTH[@]}`] \
@@ -177,7 +177,7 @@ for ((a=0; a<${#ARMS[@]}; a++)); do
 
                 echo "note: found ${#FILES[@]} exposures"
 
-                ophy++ ${SPECLIB_DIR}/generic/get_fluxes files=[`join , ${FILES[@]}`] \
+                ${SPECLIB_DIR}/generic/get_fluxes files=[`join , ${FILES[@]}`] \
                     catalog=${RESCALING_CATALOG} catalog_id=${CATID} \
                     verbose filters=${RESCALING_FILTERS}
             done
@@ -196,7 +196,7 @@ for ((a=0; a<${#ARMS[@]}; a++)); do
                         FILES=("${FILES[@]}" ${OUT_DIR}/${OB}/stacked_${TARGET}_${EPOCH}_${SOURCE}.fits)
                     done
 
-                    ophy++ ${SPECLIB_DIR}/generic/flux_rescale files=[`join , ${FILES[@]}`] verbose
+                    ${SPECLIB_DIR}/generic/flux_rescale files=[`join , ${FILES[@]}`] verbose
                 done
             done
         fi
@@ -230,20 +230,20 @@ for ((a=0; a<${#ARMS[@]}; a++)); do
 
             echo "note: found ${#FILES[@]} exposures"
 
-            ophy++ ${SPECLIB_DIR}/generic/stack1d files=[`join , ${FILES[@]}`] \
+            ${SPECLIB_DIR}/generic/stack1d files=[`join , ${FILES[@]}`] \
                 out=${OUT_DIR}/${SOURCE}/stacked_${ARM}.fits rebin=${REBIN_STACKS} \
                 verbose filters=${STACK_FILTERS}
 
             if [ ${DO_RESCALE} -eq 1 ]; then
-                ophy++ ${SPECLIB_DIR}/generic/stack1d files=[`join , ${FILESR[@]}`] \
+                ${SPECLIB_DIR}/generic/stack1d files=[`join , ${FILESR[@]}`] \
                     out=${OUT_DIR}/${SOURCE}/stacked_${ARM}_rescaled.fits rebin=${REBIN_STACKS} \
                     verbose filters=${STACK_FILTERS}
             fi
 
-            ophy++ ${SPECLIB_DIR}/generic/stack2d files=[`join , ${FILES2DR[@]}`] specs=[`join , ${FILESR[@]}`] \
+            ${SPECLIB_DIR}/generic/stack2d files=[`join , ${FILES2DR[@]}`] specs=[`join , ${FILESR[@]}`] \
                 out=${OUT_DIR}/${SOURCE}/stacked_${ARM}_spec2d_sub.fits rebin=${REBIN_STACKS2D}
 
-            ophy++ ${SPECLIB_DIR}/generic/stack2d files=[`join , ${FILES2D[@]}`] specs=[`join , ${FILESR[@]}`] \
+            ${SPECLIB_DIR}/generic/stack2d files=[`join , ${FILES2D[@]}`] specs=[`join , ${FILESR[@]}`] \
                 out=${OUT_DIR}/${SOURCE}/stacked_${ARM}_spec2d.fits rebin=${REBIN_STACKS2D}
         done
     fi
