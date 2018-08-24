@@ -150,7 +150,7 @@ for ((a=0; a<${#ARMS[@]}; a++)); do
                     offset=${OFFSET} default_gauss_width=[`join , ${SOURCES_WIDTH[@]}`] \
                     default_gauss_pos=[`join , ${SOURCES_POS[@]}`] seeing=${SEEING} \
                     sources=[`join , ${SOURCES[@]}`] instrument="X-SHOOTER" \
-                    ${EXTRA_OPTS} discard_wcs_pos ${EXTRACT_OPTIONS}
+                    ${EXTRA_OPTS} ${EXTRACT_OPTIONS}
             done
         fi
     done
