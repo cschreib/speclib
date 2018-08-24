@@ -78,6 +78,7 @@ int phypp_main(int argc, char* argv[]) {
     vec1d lam;
     vec1s exp_band(files.size());
     vec1d exp_seeing(files.size());
+    vec1d exp_width(files.size());
     vec1d exp_offset(files.size());
     for (uint_t i : range(files)) {
         vec1d tflx, terr;
@@ -97,11 +98,12 @@ int phypp_main(int argc, char* argv[]) {
         }
 
         iimg.read_keyword("BAND", exp_band[i]);
-        iimg.read_keyword("GWIDTH", exp_seeing[i]);
-        exp_seeing[i] *= 2.335; // sigma to FWHM (NB: pixel units, not arcsec!)
+        iimg.read_keyword("SEEING", exp_seeing[i]);
+        iimg.read_keyword("GWIDTH", exp_width[i]);
         if (verbose) {
             note(files[i]);
-            note(" seeing: ", exp_seeing[i], " pixels, band: ", exp_band[i]);
+            note(" seeing: ", exp_seeing[i], " arcsec", ", width: ",
+                exp_width[i], ", band: ", exp_band[i]);
         }
 
         iimg.read_keyword("GPOS", exp_offset[i]);
@@ -190,7 +192,8 @@ int phypp_main(int argc, char* argv[]) {
             oimg.write_keyword(base+"SRC", file::get_basename(files[i]));
             oimg.write_keyword(base+"BND", exp_band[i], "observing band");
             oimg.write_keyword(base+"SNG", round(1000*exp_seeing[i])/1000.0, "seeing (arcsec)");
-            oimg.write_keyword(base+"OFF", round(1000*exp_offset[i])/1000.0, "slit offset (pixels)");
+            oimg.write_keyword(base+"OFF", round(1000*exp_width[i])/1000.0, "model width (arcsec)");
+            oimg.write_keyword(base+"OFF", round(1000*exp_offset[i])/1000.0, "slit offset (arcsec)");
             oimg.write_keyword(base+"WEI", round(1000*exp_wei[i])/1000.0, "average weight");
             oimg.write_keyword(base+"REJ", round(1000*exp_fclip[i])/1000.0, "fraction of rejected pixels");
         }
