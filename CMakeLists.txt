@@ -35,10 +35,12 @@ ExternalProject_Add(wcslib
     SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/wcslib
     DOWNLOAD_DIR ${PROJECT_SOURCE_DIR}/external/wcslib
     URL ftp://ftp.atnf.csiro.au/pub/software/wcslib/wcslib.tar.bz2
+    PATCH_COMMAND patch ${PROJECT_SOURCE_DIR}/external/wcslib/makedefs.in ${PROJECT_SOURCE_DIR}/patches/wcslib_shrlib.patch
     CONFIGURE_COMMAND ${PROJECT_SOURCE_DIR}/external/wcslib/configure
         --prefix=${PROJECT_SOURCE_DIR}/external
         --without-cfitsio --without-pgplot --disable-fortran --disable-utils
-    BUILD_COMMAND make install && rm ${PROJECT_SOURCE_DIR}/external/lib/libwcs.so
+    BUILD_COMMAND make install
+    INSTALL_COMMAND ""
     BUILD_IN_SOURCE 1)
 
 # Configure and build phy++
