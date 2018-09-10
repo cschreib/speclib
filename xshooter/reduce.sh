@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # ---------------------------
 # join() function
 #
@@ -30,6 +32,7 @@ DEFAULT_SEEING=(0.5 0.5 0.5)
 OBS=(A B C D E F G H I)
 
 # MODIFY this if your data is at a different location
+
 DATA_DIR=raw
 
 # MODIFY this to save the 1D spectra in a different directory
