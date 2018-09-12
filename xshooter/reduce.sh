@@ -227,7 +227,13 @@ for ((a=0; a<${#ARMS[@]}; a++)); do
                         FILESR=("${FILESR[@]}" ${OUT_DIR}/${OB}/stacked_${TARGET}_${EPOCH}_${SOURCE}.fits)
                     fi
                     FILES2DR=("${FILES2DR[@]}" ${OUT_DIR}/${OB}/stacked_${TARGET}_${EPOCH}_${SOURCE}_spec2d_residual.fits)
-                    FILES2D=("${FILES2D[@]}" ${OUT_DIR}/${OB}/stacked_${TARGET}_${EPOCH}_spec2d_bgsub.fits)
+                    if [ $(echo ${EXTRACT_OPTIONS} | grep -c "gauss_fit_background") -eq 0 ]; then
+                        # No background subtraction done, use the default extracted 2D spectrum
+                        FILES2D=("${FILES2D[@]}" ${OUT_DIR}/${OB}/stacked_${TARGET}_${EPOCH}_spec2d.fits)
+                    else
+                        # Background subtraction done, use the background-subtracted 2D spectrum
+                        FILES2D=("${FILES2D[@]}" ${OUT_DIR}/${OB}/stacked_${TARGET}_${EPOCH}_spec2d_bgsub.fits)
+                    fi
                 done
             done
 
