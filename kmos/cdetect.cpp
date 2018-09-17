@@ -630,13 +630,19 @@ int phypp_main(int argc, char* argv[]) {
     }
 
     if (ascii) {
-        vec1s hdr = {"ID", "x", "y", "RA [deg]", "Dec [deg]", "Npix",
+        ascii::output_format opts;
+        opts.header = {"ID", "x", "y", "RA [deg]", "Dec [deg]", "Npix",
             lambda_name+" "+lambda_unit, lambda_name+" [pix]", flux_unit, "error", "SNR"};
 
-        vec1s slambda = (frequency ? strna_sci(3e14/lambda) : strna(lambda));
+        vec1s slambda = (frequency ?
+            to_string_vector(format::scientific(3e14/lambda)) :
+            to_string_vector(lambda));
 
-        ascii::write_table_hdr(ofilebase+"_cat.cat", 18, hdr,
-            id, x, y, ra, dec, npix, slambda, lpix, strna_sci(flux), strna_sci(flux_err), flux/flux_err
+        ascii::write_table(ofilebase+"_cat.cat", opts,
+            id, x, y, ra, dec, npix, slambda, lpix,
+            to_string_vector(format::scientific(flux)),
+            to_string_vector(format::scientific(flux_err)),
+            flux/flux_err
         );
     } else {
         fits::write_table(ofilebase+"_cat.fits", ftable(
@@ -717,7 +723,7 @@ int phypp_main(int argc, char* argv[]) {
         if (l.second.lambda.size() == 1) {
             ndb.push_back(l.first);
         } else {
-            ndb.push_back(l.first+"-"+strn(ill+1));
+            ndb.push_back(l.first+"-"+to_string(ill+1));
         }
     }
 
@@ -749,7 +755,7 @@ int phypp_main(int argc, char* argv[]) {
         vec1s lids;
 
         if (verbose) {
-            note("group ", strn(ig+1), ": ", lg.size(), " detection", (lg.size() > 1 ? "s" : ""));
+            note("group ", to_string(ig+1), ": ", lg.size(), " detection", (lg.size() > 1 ? "s" : ""));
         }
 
         // For each line in the group, first blindly try the line alone
@@ -832,7 +838,7 @@ int phypp_main(int argc, char* argv[]) {
                     vec1s tmpl(idus.size());
                     for (uint_t i : range(ids)) {
                         vec1u idl = idz[where(zfrom[idz] == zfrom[ids[i]])];
-                        tmpl[i] = strn(zfrom[ids[i]]+1)+":"+collapse(lids[idl], "/");
+                        tmpl[i] = to_string(zfrom[ids[i]]+1)+":"+collapse(lids[idl], "/");
                     }
 
                     lids.push_back(collapse(tmpl,","));
@@ -897,7 +903,7 @@ int phypp_main(int argc, char* argv[]) {
         }
 
         if (!zs.empty()) {
-            lids[_-(zfrom.size()-1)] = strna(zfrom+1)+":"+lids[_-(zfrom.size()-1)];
+            lids[_-(zfrom.size()-1)] = to_string_vector(zfrom+1)+":"+lids[_-(zfrom.size()-1)];
         }
 
         // Sort all the solutions by decreasing quality flag and increasing dvmax
@@ -944,37 +950,13 @@ int phypp_main(int argc, char* argv[]) {
         // Save group
         if (!zs.empty()) {
             if (ascii) {
-                vec1s hdr = {"qflag1", "qflag2", "fmatch", "maxdv", "z", "zerr", "lines"};
-
-                // Manual handling of column widths
-                vec1s sq1 = strna(qflag1);
-                vec1s sq2 = strna(qflag2);
-                vec1s sfm = strna(round(100.0*fmatch)/100.0);
-                vec1s sdv = strna(round(dvmax));
-                vec1s sz = strna(zs);
-                vec1s sdz = strna(dzs);
-                vec1s sl = lids;
-
-                sq1 = align_right(sq1, max(length(sq1))+8);
-                hdr[0] = align_right(hdr[0], sq1[0].size());
-                sq2 = align_right(sq2, max(length(sq2))+8);
-                hdr[1] = align_right(hdr[1], sq2[0].size());
-                sfm = align_right(sfm, max(length(sfm))+8);
-                hdr[2] = align_right(hdr[2], sfm[0].size());
-                sdv = align_right(sdv, max(length(sdv))+8);
-                hdr[3] = align_right(hdr[3], sdv[0].size());
-                sz = align_right(sz, max(length(sz))+4);
-                hdr[4] = align_right(hdr[4], sz[0].size());
-                sdz = align_right(sdz, max(length(sdz))+4);
-                hdr[5] = align_right(hdr[5], sdz[0].size());
-                sl  = "  "+align_left(sl, max(length(sl)));
-                hdr[6] = "  "+align_left(hdr[6], sl[0].size()-2);
-
-                ascii::write_table_hdr(ofilebase+"_gcat_"+strn(ig+1)+".cat", 0,
-                    hdr, sq1, sq2, sfm, sdv, sz, sdz, sl
+                ascii::output_format opts;
+                opts.header = {"qflag1", "qflag2", "fmatch", "maxdv", "z", "zerr", "lines"};
+                ascii::write_table(ofilebase+"_gcat_"+to_string(ig+1)+".cat", opts,
+                    qflag1, qflag2, round(100.0*fmatch)/100.0, round(dvmax), zs, dzs, lids
                 );
             } else {
-                fits::write_table(ofilebase+"_gcat_"+strn(ig+1)+".fits",
+                fits::write_table(ofilebase+"_gcat_"+to_string(ig+1)+".fits",
                     "qflag1", qflag1, "qflag2", qflag2, "fmatch", fmatch,
                     "maxdv", dvmax, "z", zs, "zerr", dzs, "lines", lids
                 );
@@ -983,34 +965,10 @@ int phypp_main(int argc, char* argv[]) {
     }
 
     if (ascii) {
-        vec1s hdr = {"qflag1", "qflag2", "fmatch", "maxdv", "z", "zerr", "lines"};
-
-        // Manual handling of column widths
-        vec1s sq1 = strna(gqf1);
-        vec1s sq2 = strna(gqf2);
-        vec1s sfm = strna(round(100.0*gfm)/100.0);
-        vec1s sdv = strna(round(gdv));
-        vec1s sz = strna(gz);
-        vec1s sdz = strna(gze);
-        vec1s sl = gl;
-
-        sq1 = align_right(sq1, max(length(sq1))+8);
-        hdr[0] = align_right(hdr[0], sq1[0].size());
-        sq2 = align_right(sq2, max(length(sq2))+8);
-        hdr[1] = align_right(hdr[1], sq2[0].size());
-        sfm = align_right(sfm, max(length(sfm))+8);
-        hdr[2] = align_right(hdr[2], sfm[0].size());
-        sdv = align_right(sdv, max(length(sdv))+8);
-        hdr[3] = align_right(hdr[3], sdv[0].size());
-        sz = align_right(sz, max(length(sz))+4);
-        hdr[4] = align_right(hdr[4], sz[0].size());
-        sdz = align_right(sdz, max(length(sdz))+4);
-        hdr[5] = align_right(hdr[5], sdz[0].size());
-        sl  = "  "+align_left(sl, max(length(sl)));
-        hdr[6] = "  "+align_left(hdr[6], sl[0].size()-2);
-
-        ascii::write_table_hdr(ofilebase+"_gcat.cat", 0,
-            hdr, sq1, sq2, sfm, sdv, sz, sdz, sl
+        ascii::output_format opts;
+        opts.header = {"qflag1", "qflag2", "fmatch", "maxdv", "z", "zerr", "lines"};
+        ascii::write_table(ofilebase+"_gcat.cat", opts,
+            gqf1, gqf2, round(100.0*gfm)/100.0, round(gdv), gz, gze, gl
         );
     } else {
         fits::write_table(ofilebase+"_gcat.fits",
@@ -1136,7 +1094,7 @@ vec2u grow_within(vec2u map, vec2b mask) {
 }
 
 void print_help(const std::map<std::string,line_t>& db) {
-    using namespace format;
+    using namespace terminal_format;
 
     print("cdetect v1.0");
     print("usage: cdetect <kmos_cube.fits> [options]");
@@ -1290,7 +1248,7 @@ void print_available_lines(const std::map<std::string,line_t>& db) {
             print("  - ", l.first, ", lambda=", l.second.lambda[0]);
         } else {
             for (uint_t il : range(l.second.lambda)) {
-                print("  - ", l.first+"-"+strn(il+1), ", lambda=", l.second.lambda[il]);
+                print("  - ", l.first+"-"+to_string(il+1), ", lambda=", l.second.lambda[il]);
             }
         }
     }

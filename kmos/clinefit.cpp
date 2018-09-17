@@ -521,7 +521,7 @@ int phypp_main(int argc, char* argv[]) {
 }
 
 void print_help(const std::map<std::string,line_t>& db) {
-    using namespace format;
+    using namespace terminal_format;
 
     print("clinefit v1.0");
     print("usage: clinefit <kmos_cube.fits> z0=... line=... [options]");

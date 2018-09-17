@@ -73,7 +73,7 @@ int phypp_main(int argc, char* argv[]) {
     vec1d bands_up  = {1.8609, 1.8779, 1.8939, 1.9072, 1.9169};
 
     vec1s files;
-    ascii::read_table(argv[1], ascii::find_skip(argv[1]), files);
+    ascii::read_table(argv[1], files);
 
     if (verbose) note("scanning files to build list of targets");
 
@@ -211,7 +211,7 @@ int phypp_main(int argc, char* argv[]) {
             }
         }
 
-        vec1u idg = where(thdu > 0);
+        vec1u idg = where(thdu > 0u);
         if (idg.empty()) {
             warning("target ", target, " has no valid data to stack");
             continue;
@@ -220,7 +220,7 @@ int phypp_main(int argc, char* argv[]) {
         // Define spatial extent of stacked cube
         double yshift = abs(floor(min(dy[idg])));
         double xshift = abs(floor(min(dx[idg])));
-        uint_t nfile = count(thdu > 0);
+        uint_t nfile = count(thdu > 0u);
         uint_t nlam = orig_dims[0];
         uint_t ny = orig_dims[1]+ceil(max(dy[idg])+yshift);
         uint_t nx = orig_dims[2]+ceil(max(dx[idg])+xshift);

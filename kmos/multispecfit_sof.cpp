@@ -80,7 +80,7 @@ int phypp_main(int argc, char* argv[]) {
 
     // Read SOF
     vec1s files;
-    ascii::read_table(argv[1], ascii::find_skip(argv[1]), files);
+    ascii::read_table(argv[1], files);
     files = file::get_directory(argv[1])+files;
 
     // Read and fit spectra
@@ -348,7 +348,7 @@ int phypp_main(int argc, char* argv[]) {
 }
 
 void print_help() {
-    using namespace format;
+    using namespace terminal_format;
 
     print("multispecfit v1.0");
     print("usage: multispecfit_sof <list.sof> <models.fits> suffix=[...] [options]");

@@ -159,7 +159,7 @@ int phypp_main(int argc, char* argv[]) {
 }
 
 void print_help() {
-    using namespace format;
+    using namespace terminal_format;
 
     print("multispecfit v1.0");
     print("usage: multispecfit <kmos_cube.fits> <models.fits> suffix=[...] [options]");

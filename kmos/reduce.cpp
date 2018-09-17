@@ -452,7 +452,7 @@ int phypp_main(int argc, char* argv[]) {
         sof.open("combine.sof");
 
         for (uint_t i : range(dithers)) {
-            std::ofstream sof2("cont"+strn(i+1)+".sof");
+            std::ofstream sof2("cont"+to_string(i+1)+".sof");
             sof2 << dithers[i] << " COMMAND_LINE\n";
             sof2 << kmos_calib_dir+"kmos_oh_spec_"+band+".fits COMMAND_LINE\n";
             sof2.close();
@@ -596,7 +596,7 @@ int phypp_main(int argc, char* argv[]) {
 }
 
 void print_help() {
-    using namespace format;
+    using namespace terminal_format;
 
     print("reduce v1.0");
     print("usage: reduce <task> <target> grating=... [options]");

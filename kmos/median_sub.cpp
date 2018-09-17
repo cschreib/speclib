@@ -20,7 +20,7 @@ int phypp_main(int argc, char* argv[]) {
 
     vec1d ra, dec, size;
     if (!masks.empty()) {
-        ascii::read_table(masks, ascii::find_skip(masks), _, ra, dec, size);
+        ascii::read_table(masks, _, ra, dec, size);
     }
 
     auto ksigma = [](vec1d data) {

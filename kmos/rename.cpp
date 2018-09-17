@@ -57,7 +57,7 @@ int phypp_main(int argc, char* argv[]) {
 }
 
 void print_help() {
-    using namespace format;
+    using namespace terminal_format;
 
     print("rename v1.0");
     print("usage: rename <directory>");

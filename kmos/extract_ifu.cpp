@@ -21,7 +21,7 @@ int phypp_main(int argc, char* argv[]) {
         fimg.reach_hdu(0);
 
         std::string name;
-        fimg.read_keyword("HIERARCH ESO OCS ARM"+strn(i+1)+" NAME", name);
+        fimg.read_keyword("HIERARCH ESO OCS ARM"+to_string(i+1)+" NAME", name);
         name = to_lower(trim(name, " '"));
 
         uint_t k = where_first(name == names);

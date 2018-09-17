@@ -39,7 +39,7 @@ int phypp_main(int argc, char* argv[]) {
     uint_t nexp = 0;
 
     for (uint_t i : range(ids)) {
-        std::string dir = scis+align_right(strn(ids[i]), 2, '0')+"/";
+        std::string dir = scis+align_right(to_string(ids[i]), 2, '0')+"/";
         print(dir);
 
         vec1s files = dir+file::list_files(dir+"sci_reconstructed*-sci.fits");
@@ -58,9 +58,9 @@ int phypp_main(int argc, char* argv[]) {
             vec1s arms(24);
             bool badfile = false;
             for (uint_t u : range(24)) {
-                if (!fcubes.read_keyword("ESO OCS ARM"+strn(u+1)+" NAME", arms[u])) {
+                if (!fcubes.read_keyword("ESO OCS ARM"+to_string(u+1)+" NAME", arms[u])) {
                     note("ignoring invalid file '", f, "'");
-                    note("missing keyword 'ESO OCS ARM"+strn(u+1)+" NAME'");
+                    note("missing keyword 'ESO OCS ARM"+to_string(u+1)+" NAME'");
                     ignore.push_back(k);
                     badfile = true;
                     break;
@@ -128,7 +128,7 @@ int phypp_main(int argc, char* argv[]) {
     shx = truncate_decimals(shx, 2);
     shy = truncate_decimals(shy, 2);
 
-    ascii::write_table("shifts.txt", 10, shx, shy);
+    ascii::write_table("shifts.txt", shx, shy);
 
     return 0;
 }

@@ -45,7 +45,7 @@ int phypp_main(int argc, char* argv[]) {
 }
 
 void print_help() {
-    using namespace format;
+    using namespace terminal_format;
 
     print("contsub v1.0");
     print("usage: contsub <kmos_cube.fits> continuum_width=...");
