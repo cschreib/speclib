@@ -73,19 +73,17 @@ int phypp_main(int argc, char* argv[]) {
 
     // Read the star's intrinsic spectrum
     vec1d tlam, tsed;
-    ascii::read_table(star_spec, ascii::find_skip(star_spec), tlam, tsed);
+    ascii::read_table(star_spec, tlam, tsed);
 
     // Read the MOSFIRE filter's throughput
     vec1s filter_band;
     vec<1,filter_t> filters; {
         filter_dir = file::directorize(filter_dir);
-        vec1s ffiles = file::list_files(filter_dir+"*.dat");
+        vec1s ffiles = file::list_files(filter_dir, "*.dat");
         for (uint_t i : range(ffiles)) {
             filter_t f;
             std::string band = file::remove_extension(ffiles[i]);
-            ascii::read_table(filter_dir+ffiles[i], ascii::find_skip(filter_dir+ffiles[i]),
-                f.lam, f.res
-            );
+            ascii::read_table(filter_dir+ffiles[i], f.lam, f.res);
 
             vec1u ids = sort(f.lam);
             f.lam = f.lam[ids];
@@ -99,9 +97,7 @@ int phypp_main(int argc, char* argv[]) {
 
     // Read the average transmission at Mauna Kea
     vec1d omk_lam, omk_cor;
-    ascii::read_table(filter_dir+"/mauna_kea_avg.dat", ascii::find_skip(filter_dir+"mauna_kea_avg.dat"),
-        omk_lam, omk_cor
-    );
+    ascii::read_table(filter_dir+"/mauna_kea_avg.dat", omk_lam, omk_cor);
 
     // Read the observed spectrum (just the first one, to get wavelength grid)
     vec1d oflx, oerr;
@@ -689,7 +685,7 @@ int phypp_main(int argc, char* argv[]) {
                 fname = "/tmp/failed_fits_"+to_string(ntry)+".fits";
             }
 
-            fits::write_table(fname, ftable(tcor, terr, x, res.cov));
+            fits::write_table(fname, "tcor", tcor, "terr", terr, "x", x, "cov", res.cov.base);
             note("  invalid fitted data is saved in '"+fname+"' for inspection");
             return 1;
         }
