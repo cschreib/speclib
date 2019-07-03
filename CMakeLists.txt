@@ -28,6 +28,8 @@ ExternalProject_Add(cfitsio
         -DBUILD_TOOLS=OFF
         -DBUILD_TESTS=OFF
         -DCMAKE_INSTALL_PREFIX=${PROJECT_SOURCE_DIR}/external
+        -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+        -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
         -DCMAKE_BUILD_TYPE=Release)
 
 # Configure and build WCSlib
@@ -39,6 +41,7 @@ ExternalProject_Add(wcslib
     CONFIGURE_COMMAND ${PROJECT_SOURCE_DIR}/external/wcslib/configure
         --prefix=${PROJECT_SOURCE_DIR}/external
         --without-cfitsio --without-pgplot --disable-fortran --disable-utils
+        CC=${CMAKE_C_COMPILER}
     BUILD_COMMAND make install
     INSTALL_COMMAND ""
     BUILD_IN_SOURCE 1)
@@ -59,6 +62,8 @@ ExternalProject_Add(phy++
         -DCFITSIO_ROOT_DIR=${PROJECT_SOURCE_DIR}/external
         -DWCSLIB_ROOT_DIR=${PROJECT_SOURCE_DIR}/external
         -DCMAKE_INSTALL_PREFIX=${PROJECT_SOURCE_DIR}/external
+        -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+        -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
         -DCMAKE_BUILD_TYPE=Release)
 
 # Configure and build sub-projects
@@ -71,6 +76,8 @@ ExternalProject_Add(generic
         -DPHYPP_ROOT_DIR=${PROJECT_SOURCE_DIR}/external
         -DCMAKE_INSTALL_PREFIX=${PROJECT_SOURCE_DIR}/generic
         -DCMAKE_MODULE_PATH=${PROJECT_SOURCE_DIR}/external/phypp/cmake
+        -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+        -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
 
 ExternalProject_Add(xshooter
@@ -82,6 +89,8 @@ ExternalProject_Add(xshooter
         -DPHYPP_ROOT_DIR=${PROJECT_SOURCE_DIR}/external
         -DCMAKE_INSTALL_PREFIX=${PROJECT_SOURCE_DIR}/xshooter
         -DCMAKE_MODULE_PATH=${PROJECT_SOURCE_DIR}/external/phypp/cmake
+        -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+        -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
 
 ExternalProject_Add(mosfire
@@ -93,6 +102,8 @@ ExternalProject_Add(mosfire
         -DPHYPP_ROOT_DIR=${PROJECT_SOURCE_DIR}/external
         -DCMAKE_INSTALL_PREFIX=${PROJECT_SOURCE_DIR}/mosfire
         -DCMAKE_MODULE_PATH=${PROJECT_SOURCE_DIR}/external/phypp/cmake
+        -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+        -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
 
 ExternalProject_Add(kmos
@@ -104,4 +115,6 @@ ExternalProject_Add(kmos
         -DPHYPP_ROOT_DIR=${PROJECT_SOURCE_DIR}/external
         -DCMAKE_INSTALL_PREFIX=${PROJECT_SOURCE_DIR}/kmos
         -DCMAKE_MODULE_PATH=${PROJECT_SOURCE_DIR}/external/phypp/cmake
+        -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+        -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE})
